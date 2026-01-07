@@ -105,9 +105,7 @@ html, body {
   color: var(--accent);
 }
 
-.crumb:hover {
-  text-shadow: 0 0 6px #c9a24d;
-}
+.crumb:hover { text-shadow: 0 0 6px #c9a24d; }
 
 .sep {
   margin: 0 6px;
@@ -128,6 +126,11 @@ pre {
   white-space: pre-wrap;
   font-family: Consolas, monospace;
   font-size: 13px;
+  line-height: 1.15;   /* 🔧 compact spacing */
+}
+
+pre span {
+  line-height: 1.15;   /* 🔧 prevent span expansion */
 }
 
 /* INI highlighting */
