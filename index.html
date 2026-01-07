@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Project Diablo 2 Tile Preview (act0)</title>
-<!-- Google Font: MedievalSharp -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
-
-<style>
-@font-face {
-  font-family: "DiabloHeavy";
-  src: url("https://www.dafontfree.net/downfont/f121407-17678042343/diabloheavy.ttf");
-}
-
+	<head>
+		<meta charset="UTF-8">
+			<title>Project Diablo 2 Tile Preview (act0)</title>
+			<!-- Google Font: MedievalSharp -->
+			<link rel="preconnect" href="https://fonts.googleapis.com">
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+				<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+					<style>
 :root {
   --bg: #0b0b0b;
   --panel: #141414;
@@ -47,6 +41,17 @@ html, body {
 #container {
   display: flex;
   height: calc(100% - 78px); /* header + footer */
+}
+
+#fileContent {
+  overflow: auto;       /* allows both vertical and horizontal scrolling */
+  max-width: 100%;      /* ensures it doesn’t exceed the main area */
+}
+
+#fileContent canvas,
+#fileContent img {
+  display: block;
+  max-width: none;      /* allow canvas/images to exceed container width */
 }
 
 #sidebar {
@@ -84,8 +89,9 @@ html, body {
 #main {
   flex: 1;
   padding: 16px;
-  overflow-y: auto;
+  overflow: hidden; /* hide overflow here, let #fileContent scroll */
 }
+
 
 .breadcrumb {
   margin-bottom: 12px;
@@ -134,30 +140,25 @@ canvas, img {
   color: #9f8b5a;
 }
 </style>
-</head>
-
-<body>
-<div id="header">Project Diablo 2 Tile Preview (act0)</div>
-
-<div id="container">
-  <div id="sidebar">
-    <h3>Repository</h3>
-    <div id="tree"></div>
-  </div>
-  <div id="main">
-    <!-- Breadcrumb is now permanent -->
-    <div class="breadcrumb" id="breadcrumb"></div>
-    <div id="fileContent">
-      <p>Select a file to view.</p>
-    </div>
-  </div>
-</div>
-
-<div id="footer">
+				</head>
+				<body>
+					<div id="header">Project Diablo 2 Tile Preview (act0)</div>
+					<div id="container">
+						<div id="sidebar">
+							<h3>Repository</h3>
+							<div id="tree"/>
+						</div>
+						<div id="main">
+							<div class="breadcrumb" id="breadcrumb"/>
+							<div id="fileContent">
+								<p>Select a file to view.</p>
+							</div>
+						</div>
+					</div>
+					<div id="footer">
   Graphic preview for ingame tiles - beta | v1.1 | made by Gimli
 </div>
-
-<script>
+					<script>
 const owner = "D2R-Gimli";
 const repo = "Diablo2_act0_color_palette";
 const basePath = "data/global/tiles"; // starting folder
@@ -215,20 +216,12 @@ function updateBreadcrumb() {
     span.textContent = part;
     span.onclick = () => loadDir(pathAcc);
     breadcrumbEl.appendChild(span);
-    if (index < parts.length - 1) breadcrumbEl.appendChild(document.createTextNode(" / "));
+    if (index < parts.length - 1) breadcrumbEl.appendChild(document.createTextNode(""));
   });
 }
 
 async function loadFile(item) {
-  fileContent.innerHTML = ""; // clear only file content, keep breadcrumb
-
-  const title = document.createElement("div");
-  title.className = "filename";
-  title.textContent = item.name;
-  fileContent.appendChild(title);
-
-  if (item.name.endsWith(".ini")) {
-    const text = await fetch(item.download_url).then(r => r.text());
+  fileContent.innerHTML = " "; clear only file content, keep breadcrumb const title=document.createElement("div" ); title.className="filename" ; title.textContent=item.name; fileContent.appendChild(title); if (item.name.endsWith(".ini")) { const text=await fetch(item.download_url).then(r=> r.text());
     const pre = document.createElement("pre");
     pre.textContent = text; // plain text, no highlighting
     fileContent.appendChild(pre);
@@ -253,34 +246,8 @@ function decodePCX(buffer) {
   const pixels = new Uint8Array(w * h);
   let p = 128, i = 0;
 
-  while (i < pixels.length) {
-    let v = data[p++];
-    if ((v & 0xC0) === 0xC0) {
-      let c = v & 0x3F;
-      let col = data[p++];
-      while (c--) pixels[i++] = col;
-    } else pixels[i++] = v;
-  }
-
-  const pal = data.slice(data.length - 768);
-  const canvas = document.createElement("canvas");
-  canvas.width = w; canvas.height = h;
-  const ctx = canvas.getContext("2d");
-  const img = ctx.createImageData(w, h);
-
-  for (let j = 0; j < pixels.length; j++) {
-    const c = pixels[j] * 3;
-    img.data[j*4] = pal[c];
-    img.data[j*4+1] = pal[c+1];
-    img.data[j*4+2] = pal[c+2];
-    img.data[j*4+3] = 255;
-  }
-
-  ctx.putImageData(img, 0, 0);
-  return canvas;
-}
-
-loadDir();
-</script>
-</body>
-</html>
+  while (i < pixels.length){ let v=data[p++]; if ((v & 0xC0)===0xC0) { let c=v & 0x3F; let col=data[p++]; while (c--) pixels[i++]=col; } else pixels[i++]=v; } const pal=data.slice(data.length - 768); const canvas=document.createElement("canvas" ); canvas.width=w; canvas.height=h; const ctx=canvas.getContext("2d" ); const img=ctx.createImageData(w, h); for (let j=0; j
+							< pixels.length; j++) { const c=pixels[j] * 3; img.data[j*4]=pal[c]; img.data[j*4+1]=pal[c+1]; img.data[j*4+2]=pal[c+2]; img.data[j*4+3]=255; } ctx.putImageData(img, 0, 0); return canvas; } loadDir();
+						</script>
+					</body>
+				</html>
