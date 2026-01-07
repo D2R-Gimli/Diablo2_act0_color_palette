@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <title>Project Diablo 2 Tiles (act0)</title>
 
+<!--
+  Project: Project Diablo 2 Tiles (act0)
+  Version: 1.0
+  Author: Gimli
+  Description: Graphic preview for ingame tile graphics (beta)
+-->
+
 <style>
 :root {
   --bg: #0b0b0b;
@@ -69,10 +76,22 @@ html, body {
   color: #cfcfcf;
 }
 
+.back {
+  font-weight: bold;
+  color: var(--accent);
+  border-bottom: 2px solid var(--border);
+}
+
 #main {
   flex: 1;
   padding: 16px;
   overflow: auto;
+}
+
+.filename {
+  margin: 8px 0 6px;
+  font-size: 14px;
+  color: var(--accent);
 }
 
 pre {
@@ -83,11 +102,20 @@ pre {
   box-shadow: inset 0 0 12px #000;
 }
 
-canvas {
+canvas, img {
   display: block;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   border: 1px solid var(--border);
   image-rendering: pixelated;
+}
+
+#footer {
+  text-align: center;
+  font-size: 12px;
+  padding: 8px;
+  border-top: 2px solid var(--border);
+  background: #0b0703;
+  color: #9f8b5a;
 }
 </style>
 </head>
@@ -100,12 +128,20 @@ canvas {
     <h3>Repository</h3>
     <div id="tree"></div>
   </div>
+
   <div id="main">
     <p>Select a file to view.</p>
   </div>
 </div>
 
+<div id="footer">
+  graphic preview for ingame tile graphics - beta | v1.0 | made by Gimli
+</div>
+
 <script>
+const VERSION = "1.0";
+const AUTHOR = "Gimli";
+
 const owner = "D2R-Gimli";
 const repo = "Diablo2_act0_color_palette";
 const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
@@ -113,12 +149,35 @@ const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
 const tree = document.getElementById("tree");
 const main = document.getElementById("main");
 
+let currentPath = "";
+
+const allowedExtensions = [".ini", ".pcx", ".png"];
+
 async function loadDir(path = "") {
+  currentPath = path;
   tree.innerHTML = "";
+
+  // Back button
+  const back = document.createElement("div");
+  back.textContent = ".. back";
+  back.className = "item back";
+  back.onclick = () => {
+    if (!currentPath) return;
+    const parts = currentPath.split("/");
+    parts.pop();
+    loadDir(parts.join("/"));
+  };
+  tree.appendChild(back);
+
   const res = await fetch(`${apiBase}/${path}`);
   const items = await res.json();
 
   items.forEach(item => {
+    if (
+      item.type === "file" &&
+      !allowedExtensions.some(ext => item.name.toLowerCase().endsWith(ext))
+    ) return;
+
     const div = document.createElement("div");
     div.className = "item " + item.type;
     div.textContent = item.name;
@@ -135,6 +194,11 @@ async function loadDir(path = "") {
 async function loadFile(item) {
   main.innerHTML = "";
 
+  const title = document.createElement("div");
+  title.className = "filename";
+  title.textContent = item.name;
+  main.appendChild(title);
+
   if (item.name.endsWith(".ini")) {
     const text = await fetch(item.download_url).then(r => r.text());
     const pre = document.createElement("pre");
@@ -148,8 +212,10 @@ async function loadFile(item) {
     main.appendChild(canvas);
   }
 
-  else {
-    main.textContent = "Unsupported file type.";
+  else if (item.name.endsWith(".png")) {
+    const img = document.createElement("img");
+    img.src = item.download_url;
+    main.appendChild(img);
   }
 }
 
