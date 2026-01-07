@@ -1,253 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-			<title>Project Diablo 2 Tile Preview (act0)</title>
-			<!-- Google Font: MedievalSharp -->
-			<link rel="preconnect" href="https://fonts.googleapis.com">
-				<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-				<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
-					<style>
-:root {
-  --bg: #0b0b0b;
-  --panel: #141414;
-  --border: #5a3a1a;
-  --text: #d6c7a1;
-  --accent: #c9a24d;
-  --hover: #1f1f1f;
-}
+<head>
+  <meta charset="UTF-8">
+  <title>Project Diablo 2 Tile Preview (act0)</title>
 
-html, body {
-  margin: 0;
-  height: 100%;
-  background:
-    url("https://www.transparenttextures.com/patterns/dark-mosaic.png"),
-    radial-gradient(circle at top, #1a1208, #050302);
-  color: var(--text);
-  font-family: "Trebuchet MS", serif;
-}
+  <!-- Google Font: MedievalSharp -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
 
-#header {
-  font-family: 'MedievalSharp', serif;
-  font-size: 28px; /* optional: adjust size if needed */
-  color: #d6c07a; /* golden Diablo II style */
-  text-shadow:
-    0 0 6px #000,
-    0 0 12px rgba(201,162,77,0.6);
-  border-bottom: 2px solid var(--border);
-  padding: 18px 16px;
-}
+  <style>
+    /* -----------------------------
+       Color variables
+       ----------------------------- */
+    :root {
+      --bg: #0b0b0b;
+      --panel: #141414;
+      --border: #5a3a1a;
+      --text: #d6c7a1;
+      --accent: #c9a24d;
+      --hover: #1f1f1f;
+    }
 
-#container {
-  display: flex;
-  height: calc(100% - 78px); /* header + footer */
-}
+    /* -----------------------------
+       Base styles
+       ----------------------------- */
+    html, body {
+      margin: 0;
+      height: 100%;
+      background:
+        url("https://www.transparenttextures.com/patterns/dark-mosaic.png"),
+        radial-gradient(circle at top, #1a1208, #050302);
+      color: var(--text);
+      font-family: "Trebuchet MS", serif;
+    }
 
-#fileContent {
-  overflow: auto;       /* allows both vertical and horizontal scrolling */
-  max-width: 100%;      /* ensures it doesn’t exceed the main area */
-}
+    /* -----------------------------
+       Header
+       ----------------------------- */
+    #header {
+      font-family: 'MedievalSharp', serif;
+      font-size: 28px;
+      color: #d6c07a;
+      text-shadow: 0 0 6px #000, 0 0 12px rgba(201,162,77,0.6);
+      border-bottom: 2px solid var(--border);
+      padding: 18px 16px;
+      text-align: left;
+    }
 
-#fileContent canvas,
-#fileContent img {
-  display: block;
-  max-width: none;      /* allow canvas/images to exceed container width */
-}
+    /* -----------------------------
+       Container: Sidebar + Main
+       ----------------------------- */
+    #container {
+      display: flex;
+      height: calc(100% - 78px); /* Header + Footer */
+    }
 
-#sidebar {
-  width: 280px;
-  background: var(--panel);
-  border-right: 2px solid var(--border);
-  overflow-y: auto;
-}
+    /* -----------------------------
+       Sidebar
+       ----------------------------- */
+    #sidebar {
+      width: 280px;
+      background: var(--panel);
+      border-right: 2px solid var(--border);
+      overflow-y: auto;
+    }
 
-#sidebar h3 {
-  margin: 10px;
-  font-size: 14px;
-  color: var(--accent);
-}
+    #sidebar h3 {
+      margin: 10px;
+      font-size: 14px;
+      color: var(--accent);
+    }
 
-.item {
-  padding: 8px 12px;
-  cursor: pointer;
-  border-bottom: 1px solid #1f1f1f;
-}
+    .item {
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #1f1f1f;
+      display: flex;
+      align-items: center;
+    }
 
-.item:hover {
-  background: var(--hover);
-}
+    .item:hover {
+      background: var(--hover);
+    }
 
-.folder { color: #d9b56a; }
-.file { color: #cfcfcf; }
+    /* -----------------------------
+       Sidebar icons (folder/file/back)
+       ----------------------------- */
+    .item.folder::before {
+      content: "\1F4C1"; /* folder emoji */
+      margin-right: 6px;
+      color: #d9b56a;
+    }
 
-.back {
-  font-weight: bold;
-  color: var(--accent);
-  border-bottom: 2px solid var(--border);
-}
+    .item.file::before {
+      content: "\1F4C4"; /* file emoji */
+      margin-right: 6px;
+      color: #cfcfcf;
+    }
 
-#main {
-  flex: 1;
-  padding: 16px;
-  overflow: hidden; /* hide overflow here, let #fileContent scroll */
-}
+    .item.back::before {
+      content: "\2B05"; /* back arrow */
+      margin-right: 6px;
+      color: var(--accent);
+    }
 
+    /* -----------------------------
+       Main area
+       ----------------------------- */
+    #main {
+      flex: 1;
+      padding: 16px;
+      overflow: hidden; /* scrolling handled inside fileContent */
+    }
 
-.breadcrumb {
-  margin-bottom: 12px;
-  font-size: 13px;
-  color: var(--accent);
-}
+    /* Breadcrumb */
+    .breadcrumb {
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--accent);
+    }
 
-.breadcrumb span {
-  cursor: pointer;
-}
+    .breadcrumb span {
+      cursor: pointer;
+      text-decoration: underline dotted;
+    }
 
-.filename {
-  margin: 4px 0 6px;
-  font-size: 14px;
-  color: var(--accent);
-}
+    .breadcrumb span.current {
+      cursor: default;
+      text-decoration: none;
+    }
 
-pre {
-  background: #0d0d0d;
-  padding: 16px;
-  border: 1px solid var(--border);
-  box-shadow: inset 0 0 12px #000;
-  white-space: pre-wrap;
-  font-family: Consolas, monospace;
-  font-size: 13px;
-  line-height: 1; /* plain text spacing */
-  color: var(--text);
-}
+    /* Filename */
+    .filename {
+      margin: 4px 0 6px;
+      font-size: 14px;
+      color: var(--accent);
+    }
 
-canvas, img {
-  display: block;
-  margin-bottom: 24px;
-  border: 1px solid var(--border);
-  image-rendering: pixelated;
-}
+    /* -----------------------------
+       File content
+       ----------------------------- */
+    #fileContent {
+      overflow: auto; /* vertical & horizontal scroll */
+      max-width: 100%;
+      padding-bottom: 40px; /* footer-safe scrolling */
+    }
 
-#footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 12px;
-  padding: 8px;
-  background: #0b0703;
-  border-top: 2px solid var(--border);
-  color: #9f8b5a;
-}
-</style>
-				</head>
-				<body>
-					<div id="header">Project Diablo 2 Tile Preview (act0)</div>
-					<div id="container">
-						<div id="sidebar">
-							<h3>Repository</h3>
-							<div id="tree"/>
-						</div>
-						<div id="main">
-							<div class="breadcrumb" id="breadcrumb"/>
-							<div id="fileContent">
-								<p>Select a file to view.</p>
-							</div>
-						</div>
-					</div>
-					<div id="footer">
-  Graphic preview for ingame tiles - beta | v1.1 | made by Gimli
-</div>
-					<script>
-const owner = "D2R-Gimli";
-const repo = "Diablo2_act0_color_palette";
-const basePath = "data/global/tiles"; // starting folder
-const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
+    #fileContent canvas,
+    #fileContent img {
+      display: block;
+      max-width: none;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      image-rendering: pixelated;
+    }
 
-const tree = document.getElementById("tree");
-const fileContent = document.getElementById("fileContent");
-const breadcrumbEl = document.getElementById("breadcrumb");
+    pre {
+      background: #0d0d0d;
+      padding: 16px;
+      border: 1px solid var(--border);
+      box-shadow: inset 0 0 12px #000;
+      white-space: pre-wrap;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      line-height: 1;
+      color: var(--text);
+    }
 
-let currentPath = basePath;
-const allowedExtensions = [".ini", ".pcx", ".png"];
+    /* -----------------------------
+       Footer
+       ----------------------------- */
+    #footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+      padding: 8px;
+      background: #0b0703;
+      border-top: 2px solid var(--border);
+      color: #9f8b5a;
+    }
+  </style>
+</head>
 
-async function loadDir(path = basePath) {
-  currentPath = path;
-  tree.innerHTML = "";
+<body>
+  <!-- Header -->
+  <div id="header">Project Diablo 2 Tile Preview (act0)</div>
 
-  const back = document.createElement("div");
-  back.textContent = ".. back";
-  back.className = "item back";
-  back.onclick = () => {
-    if (currentPath === basePath) return;
-    const parts = currentPath.split("/");
-    parts.pop();
-    const newPath = parts.join("/") || basePath;
-    loadDir(newPath);
-  };
-  tree.appendChild(back);
+  <!-- Container -->
+  <div id="container">
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <h3>Repository</h3>
+      <div id="tree"></div>
+    </div>
 
-  const res = await fetch(`${apiBase}/${path}`);
-  const items = await res.json();
+    <!-- Main -->
+    <div id="main">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb" id="breadcrumb"></div>
 
-  items.forEach(item => {
-    if (
-      item.type === "file" &&
-      !allowedExtensions.some(ext => item.name.toLowerCase().endsWith(ext))
-    ) return;
+      <!-- File content -->
+      <div id="fileContent">
+        <p>Select a file to view.</p>
+      </div>
+    </div>
+  </div>
 
-    const div = document.createElement("div");
-    div.className = "item " + item.type;
-    div.textContent = item.name;
-    div.onclick = () => item.type === "dir" ? loadDir(item.path) : loadFile(item);
-    tree.appendChild(div);
-  });
+  <!-- Footer -->
+  <div id="footer">
+    Graphic preview for ingame tiles - beta | v1.2 | made by Gimli
+  </div>
 
-  updateBreadcrumb();
-}
+  <script>
+    // -----------------------------
+    // Repository configuration
+    // -----------------------------
+    const owner = "D2R-Gimli";
+    const repo = "Diablo2_act0_color_palette";
+    const basePath = "data/global/tiles";
+    const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
 
-function updateBreadcrumb() {
-  const parts = currentPath.split("/");
-  let pathAcc = "";
-  breadcrumbEl.innerHTML = "";
-  parts.forEach((part, index) => {
-    pathAcc += (index === 0 ? "" : "/") + part;
-    const span = document.createElement("span");
-    span.textContent = part;
-    span.onclick = () => loadDir(pathAcc);
-    breadcrumbEl.appendChild(span);
-    if (index < parts.length - 1) breadcrumbEl.appendChild(document.createTextNode(""));
-  });
-}
+    const tree = document.getElementById("tree");
+    const fileContent = document.getElementById("fileContent");
+    const breadcrumbEl = document.getElementById("breadcrumb");
 
-async function loadFile(item) {
-  fileContent.innerHTML = " "; clear only file content, keep breadcrumb const title=document.createElement("div" ); title.className="filename" ; title.textContent=item.name; fileContent.appendChild(title); if (item.name.endsWith(".ini")) { const text=await fetch(item.download_url).then(r=> r.text());
-    const pre = document.createElement("pre");
-    pre.textContent = text; // plain text, no highlighting
-    fileContent.appendChild(pre);
-  } else if (item.name.endsWith(".pcx")) {
-    const buffer = await fetch(item.download_url).then(r => r.arrayBuffer());
-    fileContent.appendChild(decodePCX(buffer));
-  } else if (item.name.endsWith(".png")) {
-    const img = document.createElement("img");
-    img.src = item.download_url;
-    fileContent.appendChild(img);
-  }
-}
+    let currentPath = basePath;
+    const allowedExtensions = [".ini", ".pcx", ".png"];
 
-/* PCX decoder */
-function decodePCX(buffer) {
-  const data = new Uint8Array(buffer);
-  const view = new DataView(buffer);
+    // -----------------------------
+    // Load directory content
+    // -----------------------------
+    async function loadDir(path = basePath) {
+      currentPath = path;
+      tree.innerHTML = "";
 
-  const w = view.getUint16(8, true) - view.getUint16(4, true) + 1;
-  const h = view.getUint16(10, true) - view.getUint16(6, true) + 1;
+      // Back button
+      const back = document.createElement("div");
+      back.textContent = ".. back";
+      back.className = "item back";
+      back.onclick = () => {
+        if (currentPath === basePath) return;
+        const parts = currentPath.split("/");
+        parts.pop();
+        const newPath = parts.join("/") || basePath;
+        loadDir(newPath);
+      };
+      tree.appendChild(back);
 
-  const pixels = new Uint8Array(w * h);
-  let p = 128, i = 0;
+      // Fetch items from GitHub API
+      const res = await fetch(`${apiBase}/${path}`);
+      const items = await res.json();
 
-  while (i < pixels.length){ let v=data[p++]; if ((v & 0xC0)===0xC0) { let c=v & 0x3F; let col=data[p++]; while (c--) pixels[i++]=col; } else pixels[i++]=v; } const pal=data.slice(data.length - 768); const canvas=document.createElement("canvas" ); canvas.width=w; canvas.height=h; const ctx=canvas.getContext("2d" ); const img=ctx.createImageData(w, h); for (let j=0; j
-							< pixels.length; j++) { const c=pixels[j] * 3; img.data[j*4]=pal[c]; img.data[j*4+1]=pal[c+1]; img.data[j*4+2]=pal[c+2]; img.data[j*4+3]=255; } ctx.putImageData(img, 0, 0); return canvas; } loadDir();
-						</script>
-					</body>
-				</html>
+      items.forEach(item => {
+        if (
+          item.type === "file" &&
+          !allowedExtensions.some(ext => item.name.toLowerCase().endsWith(ext))
+        ) return;
+
+        const div = document.createElement("div");
+        div.className = "item " + item.type;
+        div.textContent = item.name;
+        div.onclick = () => item.type === "dir" ? loadDir(item.path) : loadFile(item);
+        tree.appendChild(div);
+      });
+
+      updateBreadcrumb();
+    }
+
+    // -----------------------------
+    // Update breadcrumb navigation
+    // -----------------------------
+    function updateBreadcrumb() {
+      const parts = currentPath.split("/");
+      let pathAcc = "";
+      breadcrumbEl.innerHTML = "";
+
+      parts.forEach((part, index) => {
+        pathAcc += (index === 0 ? "" : "/") + part;
+        const span = document.createElement("span");
+        span.textContent = part;
+
+        // Only make clickable if not the last item
+        if (index < parts.length - 1) {
+          span.onclick = () => loadDir(pathAcc);
+        } else {
+          span.classList.add("current");
+        }
+
+        breadcrumbEl.appendChild(span);
+        if (index < parts.length - 1) breadcrumbEl.appendChild(document.createTextNode(" / "));
+      });
+    }
+
+    // -----------------------------
+    // Load a file
+    // -----------------------------
+    async function loadFile(item) {
+      fileContent.innerHTML = ""; // clear only file content
+      const title = document.createElement("div");
+      title.className = "filename";
+      title.textContent = item.name;
+      fileContent.appendChild(title);
+
+      if (item.name.endsWith(".ini")) {
+        const text = await fetch(item.download_url).then(r => r.text());
+        const pre = document.createElement("pre");
+        pre.textContent = text;
+        fileContent.appendChild(pre);
+      } else if (item.name.endsWith(".pcx")) {
+        const buffer = await fetch(item.download_url).then(r => r.arrayBuffer());
+        fileContent.appendChild(decodePCX(buffer));
+      } else if (item.name.endsWith(".png")) {
+        const img = document.createElement("img");
+        img.src = item.download_url;
+        fileContent.appendChild(img);
+      }
+    }
+
+    // -----------------------------
+    // PCX decoder
+    // -----------------------------
+    function decodePCX(buffer) {
+      const data = new Uint8Array(buffer);
+      const view = new DataView(buffer);
+      const w = view.getUint16(8, true) - view.getUint16(4, true) + 1;
+      const h = view.getUint16(10, true) - view.getUint16(6, true) + 1;
+
+      const pixels = new Uint8Array(w * h);
+      let p = 128, i = 0;
+
+      while (i < pixels.length) {
+        let v = data[p++];
+        if ((v & 0xC0) === 0xC0) {
+          let c = v & 0x3F;
+          let col = data[p++];
+          while (c--) pixels[i++] = col;
+        } else pixels[i++] = v;
+      }
+
+      const pal = data.slice(data.length - 768);
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      const img = ctx.createImageData(w, h);
+
+      for (let j = 0; j < pixels.length; j++) {
+        const c = pixels[j] * 3;
+        img.data[j*4] = pal[c];
+        img.data[j*4+1] = pal[c+1];
+        img.data[j*4+2] = pal[c+2];
+        img.data[j*4+3] = 255;
+      }
+
+      ctx.putImageData(img, 0, 0);
+      return canvas;
+    }
+
+    // -----------------------------
+    // Initialize
+    // -----------------------------
+    loadDir();
+  </script>
+</body>
+</html>
