@@ -2,6 +2,9 @@
 
 This repository provides the **Act0 color palette** and modified tilesets for **Diablo 2**, designed to work across all acts of the game without color shifting issues or graphical bugs.
 
+## [Graphics preview (beta)](https://d2r-gimli.github.io/Diablo2_act0_color_palette/)
+
+
 ## Overview
 
 - The original Diablo 2 game uses different **256-color palettes** for each act.
