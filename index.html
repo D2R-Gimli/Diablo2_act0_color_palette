@@ -5,7 +5,7 @@
 <title>Project Diablo 2 Tile Preview (act0)</title>
 
 <style>
-/* DiabloHeavy font */
+					  
 @font-face {
   font-family: "DiabloHeavy";
   src: url("https://www.dafontfree.net/downfont/f121407-17678042343/diabloheavy.ttf");
@@ -31,11 +31,11 @@ html, body {
 }
 
 #header {
-  padding: 18px;
-  text-align: center;
+  padding: 18px 16px;
+					 
   font-family: "DiabloHeavy", serif;
-  font-size: 36px;
-  letter-spacing: 2px;
+  font-size: 28px;
+					  
   color: #d6c07a; /* golden Diablo II style */
   text-shadow:
     0 0 6px #000,
@@ -45,7 +45,7 @@ html, body {
 
 #container {
   display: flex;
-  height: calc(100% - 120px);
+  height: calc(100% - 78px); /* header + footer */
 }
 
 #sidebar {
@@ -87,9 +87,13 @@ html, body {
 }
 
 .breadcrumb {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   font-size: 13px;
   color: var(--accent);
+}
+
+.breadcrumb span {
+  cursor: pointer;
 }
 
 .filename {
@@ -106,15 +110,16 @@ pre {
   white-space: pre-wrap;
   font-family: Consolas, monospace;
   font-size: 13px;
-  line-height: 0; /* line spacing for INI files */
+  line-height: 1; /* plain text spacing */
+  color: var(--text);
 }
 
-/* INI syntax colors */
-.ini-section { color: #c9a24d; }
-.ini-key { color: #e0d6b8; }
-.ini-eq { color: #777; }
-.ini-value { color: #8fb98f; }
-.ini-comment { color: #666; }
+					   
+								
+							
+						
+							  
+							 
 
 canvas, img {
   display: block;
@@ -146,8 +151,11 @@ canvas, img {
     <div id="tree"></div>
   </div>
   <div id="main">
+    <!-- Breadcrumb is now permanent -->
     <div class="breadcrumb" id="breadcrumb"></div>
-    <p>Select a file to view.</p>
+    <div id="fileContent">
+      <p>Select a file to view.</p>
+    </div>
   </div>
 </div>
 
@@ -162,7 +170,7 @@ const basePath = "data/global/tiles"; // starting folder
 const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
 
 const tree = document.getElementById("tree");
-const main = document.getElementById("main");
+const fileContent = document.getElementById("fileContent");
 const breadcrumbEl = document.getElementById("breadcrumb");
 
 let currentPath = basePath;
@@ -172,7 +180,7 @@ async function loadDir(path = basePath) {
   currentPath = path;
   tree.innerHTML = "";
 
-  // Back button (cannot go above basePath)
+										   
   const back = document.createElement("div");
   back.textContent = ".. back";
   back.className = "item back";
@@ -185,7 +193,7 @@ async function loadDir(path = basePath) {
   };
   tree.appendChild(back);
 
-  // Fetch directory
+					
   const res = await fetch(`${apiBase}/${path}`);
   const items = await res.json();
 
@@ -213,51 +221,51 @@ function updateBreadcrumb() {
     pathAcc += (index === 0 ? "" : "/") + part;
     const span = document.createElement("span");
     span.textContent = part;
-    span.style.cursor = "pointer";
-    span.style.color = varAccent();
+								  
+								   
     span.onclick = () => loadDir(pathAcc);
     breadcrumbEl.appendChild(span);
     if (index < parts.length - 1) breadcrumbEl.appendChild(document.createTextNode(" / "));
   });
 }
 
-function varAccent() { return "#c9a24d"; }
+										  
 
-function highlightINI(text) {
-  return text.split("\n").map(line => {
-    if (/^\s*[;#]/.test(line))
-      return `<span class="ini-comment">${line}</span>`;
-    if (/^\s*\[.*\]/.test(line))
-      return `<span class="ini-section">${line}</span>`;
-    if (line.includes("=")) {
-      const [k, v] = line.split("=");
-      return `<span class="ini-key">${k}</span><span class="ini-eq">=</span><span class="ini-value">${v}</span>`;
-    }
-    return line;
-  }).join("\n");
-}
+							 
+									   
+							  
+														
+								
+														
+							 
+									 
+																												 
+	 
+				
+				
+ 
 
 async function loadFile(item) {
-  main.innerHTML = "";
-  updateBreadcrumb(); // breadcrumb stays on top
+  fileContent.innerHTML = ""; // clear only file content, keep breadcrumb
+												
 
   const title = document.createElement("div");
   title.className = "filename";
   title.textContent = item.name;
-  main.appendChild(title);
+  fileContent.appendChild(title);
 
   if (item.name.endsWith(".ini")) {
     const text = await fetch(item.download_url).then(r => r.text());
     const pre = document.createElement("pre");
-    pre.innerHTML = highlightINI(text);
-    main.appendChild(pre);
+    pre.textContent = text; // plain text, no highlighting
+    fileContent.appendChild(pre);
   } else if (item.name.endsWith(".pcx")) {
     const buffer = await fetch(item.download_url).then(r => r.arrayBuffer());
-    main.appendChild(decodePCX(buffer));
+    fileContent.appendChild(decodePCX(buffer));
   } else if (item.name.endsWith(".png")) {
     const img = document.createElement("img");
     img.src = item.download_url;
-    main.appendChild(img);
+    fileContent.appendChild(img);
   }
 }
 
