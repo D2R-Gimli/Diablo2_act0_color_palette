@@ -35,12 +35,9 @@ html, body {
   display: flex;
   align-items: center;
   padding: 10px 16px;
-  background:
-    linear-gradient(#2a2a2a, #141414);
+  background: linear-gradient(#2a2a2a, #141414);
   border-bottom: 3px solid var(--border);
-  box-shadow:
-    inset 0 -2px 4px #000,
-    0 2px 6px #000;
+  box-shadow: inset 0 -2px 4px #000, 0 2px 6px #000;
 }
 
 #header img {
@@ -54,11 +51,9 @@ html, body {
 
 #sidebar {
   width: 220px;
-  background:
-    linear-gradient(#262626, #161616);
+  background: linear-gradient(#262626, #161616);
   border-right: 3px solid var(--border);
-  box-shadow:
-    inset -2px 0 6px #000;
+  box-shadow: inset -2px 0 6px #000;
   overflow-y: auto;
 }
 
@@ -74,10 +69,7 @@ html, body {
   border-bottom: 1px solid #1f1f1f;
 }
 
-.item:hover {
-  background: #222;
-}
-
+.item:hover { background: #222; }
 .folder { color: #d9b56a; }
 .file { color: #cfcfcf; }
 
@@ -91,10 +83,35 @@ html, body {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
-  background:
-    linear-gradient(#1a1a1a, #0f0f0f);
-  box-shadow:
-    inset 0 0 12px #000;
+  background: linear-gradient(#1a1a1a, #0f0f0f);
+  box-shadow: inset 0 0 12px #000;
+}
+
+/* Breadcrumb */
+#breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  background: linear-gradient(#2b2b2b, #1b1b1b);
+  border: 2px solid var(--border);
+  box-shadow: inset 0 0 6px #000;
+  font-size: 13px;
+}
+
+.crumb {
+  cursor: pointer;
+  color: var(--accent);
+}
+
+.crumb:hover {
+  text-shadow: 0 0 6px #c9a24d;
+}
+
+.sep {
+  margin: 0 6px;
+  color: #777;
 }
 
 .filename {
@@ -155,6 +172,7 @@ canvas, img {
   </div>
 
   <div id="main">
+    <div id="breadcrumb"></div>
     <p>Select a file to view.</p>
   </div>
 </div>
@@ -167,11 +185,11 @@ canvas, img {
 const owner = "D2R-Gimli";
 const repo = "Diablo2_act0_color_palette";
 const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
-
 const ROOT_PATH = "data/global/tiles";
 
 const tree = document.getElementById("tree");
 const main = document.getElementById("main");
+const breadcrumb = document.getElementById("breadcrumb");
 
 let currentPath = ROOT_PATH;
 const allowedExtensions = [".ini", ".pcx", ".png"];
@@ -179,8 +197,8 @@ const allowedExtensions = [".ini", ".pcx", ".png"];
 async function loadDir(path) {
   currentPath = path;
   tree.innerHTML = "";
+  renderBreadcrumb();
 
-  // Back button (locked to ROOT_PATH)
   if (currentPath !== ROOT_PATH) {
     const back = document.createElement("div");
     back.textContent = ".. back";
@@ -188,8 +206,7 @@ async function loadDir(path) {
     back.onclick = () => {
       const parts = currentPath.split("/");
       parts.pop();
-      const newPath = parts.join("/");
-      loadDir(newPath.startsWith(ROOT_PATH) ? newPath : ROOT_PATH);
+      loadDir(parts.join("/"));
     };
     tree.appendChild(back);
   }
@@ -206,22 +223,41 @@ async function loadDir(path) {
     const div = document.createElement("div");
     div.className = "item " + item.type;
     div.textContent = item.name;
-
-    div.onclick = () => {
-      if (item.type === "dir") loadDir(item.path);
-      else loadFile(item);
-    };
-
+    div.onclick = () => item.type === "dir" ? loadDir(item.path) : loadFile(item);
     tree.appendChild(div);
+  });
+}
+
+function renderBreadcrumb() {
+  breadcrumb.innerHTML = "";
+  const parts = currentPath.replace(ROOT_PATH, "").split("/").filter(Boolean);
+
+  let path = ROOT_PATH;
+  const rootCrumb = document.createElement("span");
+  rootCrumb.className = "crumb";
+  rootCrumb.textContent = "tiles";
+  rootCrumb.onclick = () => loadDir(ROOT_PATH);
+  breadcrumb.appendChild(rootCrumb);
+
+  parts.forEach(p => {
+    path += "/" + p;
+    const sep = document.createElement("span");
+    sep.className = "sep";
+    sep.textContent = "▸";
+    breadcrumb.appendChild(sep);
+
+    const c = document.createElement("span");
+    c.className = "crumb";
+    c.textContent = p;
+    c.onclick = () => loadDir(path);
+    breadcrumb.appendChild(c);
   });
 }
 
 function highlightINI(text) {
   return text.split("\n").map(line => {
-    if (/^\s*[;#]/.test(line))
-      return `<span class="ini-comment">${line}</span>`;
-    if (/^\s*\[.*\]/.test(line))
-      return `<span class="ini-section">${line}</span>`;
+    if (/^\s*[;#]/.test(line)) return `<span class="ini-comment">${line}</span>`;
+    if (/^\s*\[.*\]/.test(line)) return `<span class="ini-section">${line}</span>`;
     if (line.includes("=")) {
       const [k, v] = line.split("=");
       return `<span class="ini-key">${k}</span><span class="ini-eq">=</span><span class="ini-value">${v}</span>`;
@@ -232,6 +268,7 @@ function highlightINI(text) {
 
 async function loadFile(item) {
   main.innerHTML = "";
+  renderBreadcrumb();
 
   const title = document.createElement("div");
   title.className = "filename";
@@ -243,28 +280,22 @@ async function loadFile(item) {
     const pre = document.createElement("pre");
     pre.innerHTML = highlightINI(text);
     main.appendChild(pre);
-  }
-
-  else if (item.name.endsWith(".pcx")) {
+  } else if (item.name.endsWith(".pcx")) {
     const buffer = await fetch(item.download_url).then(r => r.arrayBuffer());
     main.appendChild(decodePCX(buffer));
-  }
-
-  else if (item.name.endsWith(".png")) {
+  } else if (item.name.endsWith(".png")) {
     const img = document.createElement("img");
     img.src = item.download_url;
     main.appendChild(img);
   }
 }
 
-/* PCX decoder (8-bit indexed) */
+/* PCX decoder */
 function decodePCX(buffer) {
   const data = new Uint8Array(buffer);
   const view = new DataView(buffer);
-
   const w = view.getUint16(8, true) - view.getUint16(4, true) + 1;
   const h = view.getUint16(10, true) - view.getUint16(6, true) + 1;
-
   const pixels = new Uint8Array(w * h);
   let p = 128, i = 0;
 
@@ -281,16 +312,15 @@ function decodePCX(buffer) {
   const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
-
   const ctx = canvas.getContext("2d");
   const img = ctx.createImageData(w, h);
 
   for (let j = 0; j < pixels.length; j++) {
     const c = pixels[j] * 3;
-    img.data[j * 4] = pal[c];
-    img.data[j * 4 + 1] = pal[c + 1];
-    img.data[j * 4 + 2] = pal[c + 2];
-    img.data[j * 4 + 3] = 255;
+    img.data[j*4] = pal[c];
+    img.data[j*4+1] = pal[c+1];
+    img.data[j*4+2] = pal[c+2];
+    img.data[j*4+3] = 255;
   }
 
   ctx.putImageData(img, 0, 0);
