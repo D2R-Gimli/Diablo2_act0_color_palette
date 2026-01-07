@@ -12,37 +12,49 @@
 -->
 
 <style>
+@font-face {
+  font-family: "Diablo";
+  src: url("https://cdn.jsdelivr.net/gh/raivivek/diablo-font@main/diablo.ttf");
+}
+
 :root {
   --bg: #0b0b0b;
   --panel: #141414;
   --border: #5a3a1a;
   --text: #d6c7a1;
-  --accent: #b88a3a;
+  --accent: #c9a24d;
   --hover: #1f1f1f;
 }
 
 html, body {
   margin: 0;
   height: 100%;
-  font-family: "Trebuchet MS", serif;
-  color: var(--text);
   background:
     url("https://www.transparenttextures.com/patterns/dark-mosaic.png"),
     radial-gradient(circle at top, #1a1208, #050302);
+  color: var(--text);
+  font-family: "Trebuchet MS", serif;
 }
 
 #header {
-  padding: 16px;
-  font-size: 26px;
-  letter-spacing: 1px;
-  text-shadow: 0 0 6px #000;
-  border-bottom: 2px solid var(--border);
+  padding: 18px;
+  text-align: center;
+  font-family: "Diablo", serif;
+  font-size: 34px;
+  letter-spacing: 2px;
   background: linear-gradient(#1a1208, #0b0703);
+  border-bottom: 2px solid var(--border);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 0 6px #000,
+    0 0 12px rgba(201,162,77,0.5);
 }
 
 #container {
   display: flex;
-  height: calc(100% - 64px);
+  height: calc(100% - 120px);
 }
 
 #sidebar {
@@ -68,13 +80,8 @@ html, body {
   background: var(--hover);
 }
 
-.folder {
-  color: #d9b56a;
-}
-
-.file {
-  color: #cfcfcf;
-}
+.folder { color: #d9b56a; }
+.file { color: #cfcfcf; }
 
 .back {
   font-weight: bold;
@@ -85,11 +92,11 @@ html, body {
 #main {
   flex: 1;
   padding: 16px;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .filename {
-  margin: 8px 0 6px;
+  margin: 10px 0 6px;
   font-size: 14px;
   color: var(--accent);
 }
@@ -98,9 +105,18 @@ pre {
   background: #0d0d0d;
   padding: 16px;
   border: 1px solid var(--border);
-  white-space: pre-wrap;
   box-shadow: inset 0 0 12px #000;
+  white-space: pre-wrap;
+  font-family: Consolas, monospace;
+  font-size: 13px;
 }
+
+/* INI syntax colors */
+.ini-section { color: #c9a24d; }
+.ini-key { color: #e0d6b8; }
+.ini-eq { color: #777; }
+.ini-value { color: #8fb98f; }
+.ini-comment { color: #666; }
 
 canvas, img {
   display: block;
@@ -110,11 +126,14 @@ canvas, img {
 }
 
 #footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   text-align: center;
   font-size: 12px;
   padding: 8px;
-  border-top: 2px solid var(--border);
   background: #0b0703;
+  border-top: 2px solid var(--border);
   color: #9f8b5a;
 }
 </style>
@@ -128,7 +147,6 @@ canvas, img {
     <h3>Repository</h3>
     <div id="tree"></div>
   </div>
-
   <div id="main">
     <p>Select a file to view.</p>
   </div>
@@ -139,9 +157,6 @@ canvas, img {
 </div>
 
 <script>
-const VERSION = "1.0";
-const AUTHOR = "Gimli";
-
 const owner = "D2R-Gimli";
 const repo = "Diablo2_act0_color_palette";
 const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
@@ -150,14 +165,12 @@ const tree = document.getElementById("tree");
 const main = document.getElementById("main");
 
 let currentPath = "";
-
 const allowedExtensions = [".ini", ".pcx", ".png"];
 
 async function loadDir(path = "") {
   currentPath = path;
   tree.innerHTML = "";
 
-  // Back button
   const back = document.createElement("div");
   back.textContent = ".. back";
   back.className = "item back";
@@ -181,14 +194,23 @@ async function loadDir(path = "") {
     const div = document.createElement("div");
     div.className = "item " + item.type;
     div.textContent = item.name;
-
-    div.onclick = () => {
-      if (item.type === "dir") loadDir(item.path);
-      else loadFile(item);
-    };
-
+    div.onclick = () => item.type === "dir" ? loadDir(item.path) : loadFile(item);
     tree.appendChild(div);
   });
+}
+
+function highlightINI(text) {
+  return text.split("\n").map(line => {
+    if (/^\s*[;#]/.test(line))
+      return `<span class="ini-comment">${line}</span>`;
+    if (/^\s*\[.*\]/.test(line))
+      return `<span class="ini-section">${line}</span>`;
+    if (line.includes("=")) {
+      const [k, v] = line.split("=");
+      return `<span class="ini-key">${k}</span><span class="ini-eq">=</span><span class="ini-value">${v}</span>`;
+    }
+    return line;
+  }).join("\n");
 }
 
 async function loadFile(item) {
@@ -202,14 +224,13 @@ async function loadFile(item) {
   if (item.name.endsWith(".ini")) {
     const text = await fetch(item.download_url).then(r => r.text());
     const pre = document.createElement("pre");
-    pre.textContent = text;
+    pre.innerHTML = highlightINI(text);
     main.appendChild(pre);
   }
 
   else if (item.name.endsWith(".pcx")) {
     const buffer = await fetch(item.download_url).then(r => r.arrayBuffer());
-    const canvas = decodePCX(buffer);
-    main.appendChild(canvas);
+    main.appendChild(decodePCX(buffer));
   }
 
   else if (item.name.endsWith(".png")) {
@@ -219,49 +240,38 @@ async function loadFile(item) {
   }
 }
 
-/* Minimal PCX decoder (8-bit indexed) */
+/* PCX decoder */
 function decodePCX(buffer) {
   const data = new Uint8Array(buffer);
   const view = new DataView(buffer);
 
-  const xmin = view.getUint16(4, true);
-  const ymin = view.getUint16(6, true);
-  const xmax = view.getUint16(8, true);
-  const ymax = view.getUint16(10, true);
+  const w = view.getUint16(8, true) - view.getUint16(4, true) + 1;
+  const h = view.getUint16(10, true) - view.getUint16(6, true) + 1;
 
-  const width = xmax - xmin + 1;
-  const height = ymax - ymin + 1;
+  const pixels = new Uint8Array(w * h);
+  let p = 128, i = 0;
 
-  const imageData = new Uint8Array(width * height);
-  let ptr = 128;
-  let i = 0;
-
-  while (i < imageData.length && ptr < data.length) {
-    let val = data[ptr++];
-    if ((val & 0xC0) === 0xC0) {
-      let count = val & 0x3F;
-      let color = data[ptr++];
-      while (count--) imageData[i++] = color;
-    } else {
-      imageData[i++] = val;
-    }
+  while (i < pixels.length) {
+    let v = data[p++];
+    if ((v & 0xC0) === 0xC0) {
+      let c = v & 0x3F;
+      let col = data[p++];
+      while (c--) pixels[i++] = col;
+    } else pixels[i++] = v;
   }
 
-  const paletteStart = data.length - 768;
-  const palette = data.slice(paletteStart);
-
+  const pal = data.slice(data.length - 768);
   const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext("2d");
-  const img = ctx.createImageData(width, height);
+  const img = ctx.createImageData(w, h);
 
-  for (let p = 0; p < imageData.length; p++) {
-    const c = imageData[p] * 3;
-    img.data[p * 4] = palette[c];
-    img.data[p * 4 + 1] = palette[c + 1];
-    img.data[p * 4 + 2] = palette[c + 2];
-    img.data[p * 4 + 3] = 255;
+  for (let j = 0; j < pixels.length; j++) {
+    const c = pixels[j] * 3;
+    img.data[j*4] = pal[c];
+    img.data[j*4+1] = pal[c+1];
+    img.data[j*4+2] = pal[c+2];
+    img.data[j*4+3] = 255;
   }
 
   ctx.putImageData(img, 0, 0);
