@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Project Diablo 2 Tile Preview (act0)</title>
 
-  <!-- Google Font: MedievalSharp -->
+  <!-- Google Font: MedievalSharp for Diablo-style header -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
@@ -14,23 +14,23 @@
        Color variables
        ----------------------------- */
     :root {
-      --bg: #0b0b0b;
-      --panel: #141414;
-      --border: #5a3a1a;
-      --text: #d6c7a1;
-      --accent: #c9a24d;
-      --hover: #1f1f1f;
+      --bg: #0b0b0b;       /* page background base */
+      --panel: #141414;    /* sidebar background */
+      --border: #5a3a1a;   /* borders */
+      --text: #d6c7a1;     /* main text */
+      --accent: #c9a24d;   /* highlights, accents */
+      --hover: #1f1f1f;    /* hover background for menu items */
     }
 
     /* -----------------------------
-       Base styles
+       Base styles for html/body
        ----------------------------- */
     html, body {
       margin: 0;
       height: 100%;
       background:
-        url("https://www.transparenttextures.com/patterns/dark-mosaic.png"),
-        radial-gradient(circle at top, #1a1208, #050302);
+        url("https://www.transparenttextures.com/patterns/dark-mosaic.png"), /* subtle texture */
+        radial-gradient(circle at top, #1a1208, #050302); /* dark gradient */
       color: var(--text);
       font-family: "Trebuchet MS", serif;
     }
@@ -39,31 +39,31 @@
        Header
        ----------------------------- */
     #header {
-      font-family: 'MedievalSharp', serif;
+      font-family: 'MedievalSharp', serif; /* Diablo-like font */
       font-size: 28px;
-      color: #d6c07a;
-      text-shadow: 0 0 6px #000, 0 0 12px rgba(201,162,77,0.6);
+      color: #d6c07a; /* golden color */
+      text-shadow: 0 0 6px #000, 0 0 12px rgba(201,162,77,0.6); /* glowing effect */
       border-bottom: 2px solid var(--border);
       padding: 18px 16px;
-      text-align: left;
+      text-align: left; /* aligned left */
     }
 
     /* -----------------------------
-       Container: Sidebar + Main
+       Container for sidebar + main
        ----------------------------- */
     #container {
       display: flex;
-      height: calc(100% - 78px); /* Header + Footer */
+      height: calc(100% - 78px); /* subtract header + footer */
     }
 
     /* -----------------------------
        Sidebar
        ----------------------------- */
     #sidebar {
-      width: 280px;
+      flex: 0 0 280px; /* fixed width */
       background: var(--panel);
       border-right: 2px solid var(--border);
-      overflow-y: auto;
+      overflow-y: auto; /* vertical scroll if content overflows */
     }
 
     #sidebar h3 {
@@ -72,6 +72,7 @@
       color: var(--accent);
     }
 
+    /* Sidebar menu items */
     .item {
       padding: 8px 12px;
       cursor: pointer;
@@ -84,38 +85,44 @@
       background: var(--hover);
     }
 
-    /* -----------------------------
-       Sidebar icons (folder/file/back)
-       ----------------------------- */
-    .item.folder::before {
-      content: "\1F4C1"; /* folder emoji */
-      margin-right: 6px;
-      color: #d9b56a;
-    }
-
-    .item.file::before {
-      content: "\1F4C4"; /* file emoji */
-      margin-right: 6px;
-      color: #cfcfcf;
-    }
-
-    .item.back::before {
-      content: "\2B05"; /* back arrow */
-      margin-right: 6px;
-      color: var(--accent);
-    }
+    /* Sidebar icons using Unicode emojis */
+    .item.folder::before { content: "\1F4C1"; margin-right: 6px; color: #d9b56a; }
+    .item.file::before { content: "\1F4C4"; margin-right: 6px; color: #cfcfcf; }
+    .item.back::before { content: "\2B05"; margin-right: 6px; color: var(--accent); }
 
     /* -----------------------------
-       Main area
+       Main content area
        ----------------------------- */
-	#main {
-	  flex: 1;
-	  display: flex;
-	  flex-direction: column; /* stack breadcrumb + fileContent vertically */
-	  padding: 16px;
-	}
+    #main {
+      flex: 1 1 auto;
+      overflow: scroll; /* always visible scrollbars */
+      padding: 16px;
+      position: relative;
+    }
 
-    /* Breadcrumb */
+    /* Breadcrumb navigation */
+										 
+						
+					 
+	 
+
+						
+										
+						
+						   
+	 
+
+									
+				
+									   
+		
+		   
+				 
+																		  
+				 
+  
+
+					
     .breadcrumb {
       margin-bottom: 12px;
       font-size: 13px;
@@ -132,31 +139,33 @@
       text-decoration: none;
     }
 
-    /* Filename */
+    /* Filename display */
     .filename {
       margin: 4px 0 6px;
       font-size: 14px;
       color: var(--accent);
     }
 
-    /* -----------------------------
-       File content
-       ----------------------------- */
+									
+    /* File content container */
+									   
     #fileContent {
-      flex: 1 1 auto;      /* fill remaining vertical space */
-	  overflow: auto;      /* enable vertical & horizontal scrolling */
-	  padding-bottom: 40px; /* footer-safe spacing */
+      width: max-content; /* allow horizontal scroll if content is wide */
+      min-width: 100%;    /* at least fill main area width */
+												  
     }
 
+    /* Display images/canvas for PCX or PNG */
     #fileContent canvas,
     #fileContent img {
       display: block;
-      max-width: none;
+      max-width: none; /* do not shrink large images */
       margin-bottom: 24px;
       border: 1px solid var(--border);
-      image-rendering: pixelated;
+      image-rendering: pixelated; /* preserve pixel art style */
     }
 
+    /* Plain text files (.ini) */
     pre {
       background: #0d0d0d;
       padding: 16px;
@@ -190,7 +199,7 @@
   <!-- Header -->
   <div id="header">Project Diablo 2 Tile Preview (act0)</div>
 
-  <!-- Container -->
+  <!-- Container for sidebar + main -->
   <div id="container">
     <!-- Sidebar -->
     <div id="sidebar">
@@ -198,12 +207,12 @@
       <div id="tree"></div>
     </div>
 
-    <!-- Main -->
+    <!-- Main content area -->
     <div id="main">
-      <!-- Breadcrumb -->
+      <!-- Breadcrumb navigation -->
       <div class="breadcrumb" id="breadcrumb"></div>
 
-      <!-- File content -->
+      <!-- File preview area -->
       <div id="fileContent">
         <p>Select a file to view.</p>
       </div>
@@ -212,7 +221,7 @@
 
   <!-- Footer -->
   <div id="footer">
-    Graphic preview for ingame tiles - beta | v1.2 | made by Gimli
+    Graphic preview for ingame tiles - beta | v1.3 | made by Gimli
   </div>
 
   <script>
@@ -221,7 +230,7 @@
     // -----------------------------
     const owner = "D2R-Gimli";
     const repo = "Diablo2_act0_color_palette";
-    const basePath = "data/global/tiles";
+    const basePath = "data/global/tiles"; // starting folder
     const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
 
     const tree = document.getElementById("tree");
@@ -232,30 +241,32 @@
     const allowedExtensions = [".ini", ".pcx", ".png"];
 
     // -----------------------------
-    // Load directory content
+    // Load directory content from GitHub
     // -----------------------------
     async function loadDir(path = basePath) {
       currentPath = path;
-      tree.innerHTML = "";
+      tree.innerHTML = ""; // clear previous content
 
-      // Back button
+      // Create a "back" button
       const back = document.createElement("div");
       back.textContent = ".. back";
       back.className = "item back";
       back.onclick = () => {
-        if (currentPath === basePath) return;
+        if (currentPath === basePath) return; // do not go above base
         const parts = currentPath.split("/");
-        parts.pop();
+        parts.pop(); // go one level up
         const newPath = parts.join("/") || basePath;
         loadDir(newPath);
       };
       tree.appendChild(back);
 
-      // Fetch items from GitHub API
+      // Fetch folder contents from GitHub API
       const res = await fetch(`${apiBase}/${path}`);
       const items = await res.json();
 
+      // Add folders/files to sidebar
       items.forEach(item => {
+        // Only allow folders and specific file extensions
         if (
           item.type === "file" &&
           !allowedExtensions.some(ext => item.name.toLowerCase().endsWith(ext))
@@ -268,6 +279,7 @@
         tree.appendChild(div);
       });
 
+      // Update breadcrumb
       updateBreadcrumb();
     }
 
@@ -277,14 +289,14 @@
     function updateBreadcrumb() {
       const parts = currentPath.split("/");
       let pathAcc = "";
-      breadcrumbEl.innerHTML = "";
+      breadcrumbEl.innerHTML = ""; // clear previous breadcrumb
 
       parts.forEach((part, index) => {
         pathAcc += (index === 0 ? "" : "/") + part;
         const span = document.createElement("span");
         span.textContent = part;
 
-        // Only make clickable if not the last item
+        // Only clickable if not last item
         if (index < parts.length - 1) {
           span.onclick = () => loadDir(pathAcc);
         } else {
@@ -297,24 +309,29 @@
     }
 
     // -----------------------------
-    // Load a file
+    // Load a file (.ini, .pcx, .png)
     // -----------------------------
     async function loadFile(item) {
-      fileContent.innerHTML = ""; // clear only file content
+      fileContent.innerHTML = ""; // clear previous content
+
+      // Show file name
       const title = document.createElement("div");
       title.className = "filename";
       title.textContent = item.name;
       fileContent.appendChild(title);
 
       if (item.name.endsWith(".ini")) {
+        // Load plain text
         const text = await fetch(item.download_url).then(r => r.text());
         const pre = document.createElement("pre");
         pre.textContent = text;
         fileContent.appendChild(pre);
       } else if (item.name.endsWith(".pcx")) {
+        // Load PCX image
         const buffer = await fetch(item.download_url).then(r => r.arrayBuffer());
         fileContent.appendChild(decodePCX(buffer));
       } else if (item.name.endsWith(".png")) {
+        // Load PNG image
         const img = document.createElement("img");
         img.src = item.download_url;
         fileContent.appendChild(img);
@@ -322,7 +339,7 @@
     }
 
     // -----------------------------
-    // PCX decoder
+    // Decode PCX image to canvas
     // -----------------------------
     function decodePCX(buffer) {
       const data = new Uint8Array(buffer);
@@ -362,7 +379,7 @@
     }
 
     // -----------------------------
-    // Initialize
+    // Initialize directory view
     // -----------------------------
     loadDir();
   </script>
