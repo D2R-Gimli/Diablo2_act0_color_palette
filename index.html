@@ -12,61 +12,59 @@
 -->
 
 <style>
-@font-face {
-  font-family: "Diablo";
-  src: url("https://cdn.jsdelivr.net/gh/raivivek/diablo-font@main/diablo.ttf");
-}
-
 :root {
-  --bg: #0b0b0b;
-  --panel: #141414;
+  --stone-dark: #1a1a1a;
+  --stone-mid: #2a2a2a;
+  --stone-light: #3a3a3a;
   --border: #5a3a1a;
   --text: #d6c7a1;
   --accent: #c9a24d;
-  --hover: #1f1f1f;
 }
 
 html, body {
   margin: 0;
   height: 100%;
   background:
-    url("https://www.transparenttextures.com/patterns/dark-mosaic.png"),
+    url("https://www.transparenttextures.com/patterns/stone-wall.png"),
     radial-gradient(circle at top, #1a1208, #050302);
   color: var(--text);
   font-family: "Trebuchet MS", serif;
 }
 
 #header {
-  padding: 18px;
-  text-align: center;
-  font-family: "Diablo", serif;
-  font-size: 34px;
-  letter-spacing: 2px;
-  background: linear-gradient(#1a1208, #0b0703);
-  border-bottom: 2px solid var(--border);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  text-shadow:
-    0 0 6px #000,
-    0 0 12px rgba(201,162,77,0.5);
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  background:
+    linear-gradient(#2a2a2a, #141414);
+  border-bottom: 3px solid var(--border);
+  box-shadow:
+    inset 0 -2px 4px #000,
+    0 2px 6px #000;
+}
+
+#header img {
+  height: 48px;
 }
 
 #container {
   display: flex;
-  height: calc(100% - 120px);
+  height: calc(100% - 92px);
 }
 
 #sidebar {
-  width: 280px;
-  background: var(--panel);
-  border-right: 2px solid var(--border);
+  width: 220px;
+  background:
+    linear-gradient(#262626, #161616);
+  border-right: 3px solid var(--border);
+  box-shadow:
+    inset -2px 0 6px #000;
   overflow-y: auto;
 }
 
 #sidebar h3 {
   margin: 10px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--accent);
 }
 
@@ -77,7 +75,7 @@ html, body {
 }
 
 .item:hover {
-  background: var(--hover);
+  background: #222;
 }
 
 .folder { color: #d9b56a; }
@@ -86,13 +84,17 @@ html, body {
 .back {
   font-weight: bold;
   color: var(--accent);
-  border-bottom: 2px solid var(--border);
+  background: #1c1c1c;
 }
 
 #main {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
+  background:
+    linear-gradient(#1a1a1a, #0f0f0f);
+  box-shadow:
+    inset 0 0 12px #000;
 }
 
 .filename {
@@ -104,14 +106,14 @@ html, body {
 pre {
   background: #0d0d0d;
   padding: 16px;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   box-shadow: inset 0 0 12px #000;
   white-space: pre-wrap;
   font-family: Consolas, monospace;
   font-size: 13px;
 }
 
-/* INI syntax colors */
+/* INI highlighting */
 .ini-section { color: #c9a24d; }
 .ini-key { color: #e0d6b8; }
 .ini-eq { color: #777; }
@@ -121,8 +123,9 @@ pre {
 canvas, img {
   display: block;
   margin-bottom: 24px;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   image-rendering: pixelated;
+  background: #000;
 }
 
 #footer {
@@ -133,20 +136,24 @@ canvas, img {
   font-size: 12px;
   padding: 8px;
   background: #0b0703;
-  border-top: 2px solid var(--border);
+  border-top: 3px solid var(--border);
   color: #9f8b5a;
 }
 </style>
 </head>
 
 <body>
-<div id="header">Project Diablo 2 Tiles (act0)</div>
+
+<div id="header">
+  <img src="https://raw.githubusercontent.com/D2R-Gimli/Diablo2_act0_color_palette/main/title.png" alt="Project Diablo 2 Tiles">
+</div>
 
 <div id="container">
   <div id="sidebar">
-    <h3>Repository</h3>
+    <h3>Tiles</h3>
     <div id="tree"></div>
   </div>
+
   <div id="main">
     <p>Select a file to view.</p>
   </div>
@@ -161,26 +168,31 @@ const owner = "D2R-Gimli";
 const repo = "Diablo2_act0_color_palette";
 const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
 
+const ROOT_PATH = "data/global/tiles";
+
 const tree = document.getElementById("tree");
 const main = document.getElementById("main");
 
-let currentPath = "";
+let currentPath = ROOT_PATH;
 const allowedExtensions = [".ini", ".pcx", ".png"];
 
-async function loadDir(path = "") {
+async function loadDir(path) {
   currentPath = path;
   tree.innerHTML = "";
 
-  const back = document.createElement("div");
-  back.textContent = ".. back";
-  back.className = "item back";
-  back.onclick = () => {
-    if (!currentPath) return;
-    const parts = currentPath.split("/");
-    parts.pop();
-    loadDir(parts.join("/"));
-  };
-  tree.appendChild(back);
+  // Back button (locked to ROOT_PATH)
+  if (currentPath !== ROOT_PATH) {
+    const back = document.createElement("div");
+    back.textContent = ".. back";
+    back.className = "item back";
+    back.onclick = () => {
+      const parts = currentPath.split("/");
+      parts.pop();
+      const newPath = parts.join("/");
+      loadDir(newPath.startsWith(ROOT_PATH) ? newPath : ROOT_PATH);
+    };
+    tree.appendChild(back);
+  }
 
   const res = await fetch(`${apiBase}/${path}`);
   const items = await res.json();
@@ -194,7 +206,12 @@ async function loadDir(path = "") {
     const div = document.createElement("div");
     div.className = "item " + item.type;
     div.textContent = item.name;
-    div.onclick = () => item.type === "dir" ? loadDir(item.path) : loadFile(item);
+
+    div.onclick = () => {
+      if (item.type === "dir") loadDir(item.path);
+      else loadFile(item);
+    };
+
     tree.appendChild(div);
   });
 }
@@ -240,7 +257,7 @@ async function loadFile(item) {
   }
 }
 
-/* PCX decoder */
+/* PCX decoder (8-bit indexed) */
 function decodePCX(buffer) {
   const data = new Uint8Array(buffer);
   const view = new DataView(buffer);
@@ -262,23 +279,25 @@ function decodePCX(buffer) {
 
   const pal = data.slice(data.length - 768);
   const canvas = document.createElement("canvas");
-  canvas.width = w; canvas.height = h;
+  canvas.width = w;
+  canvas.height = h;
+
   const ctx = canvas.getContext("2d");
   const img = ctx.createImageData(w, h);
 
   for (let j = 0; j < pixels.length; j++) {
     const c = pixels[j] * 3;
-    img.data[j*4] = pal[c];
-    img.data[j*4+1] = pal[c+1];
-    img.data[j*4+2] = pal[c+2];
-    img.data[j*4+3] = 255;
+    img.data[j * 4] = pal[c];
+    img.data[j * 4 + 1] = pal[c + 1];
+    img.data[j * 4 + 2] = pal[c + 2];
+    img.data[j * 4 + 3] = 255;
   }
 
   ctx.putImageData(img, 0, 0);
   return canvas;
 }
 
-loadDir();
+loadDir(ROOT_PATH);
 </script>
 </body>
 </html>
