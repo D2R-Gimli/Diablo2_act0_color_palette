@@ -2,64 +2,62 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Project Diablo 2 Tiles (act0)</title>
-
-<!--
-  Project: Project Diablo 2 Tiles (act0)
-  Version: 1.0
-  Author: Gimli
-  Description: Graphic preview for ingame tile graphics (beta)
--->
+<title>Project Diablo 2 Tile Preview (act0)</title>
 
 <style>
+/* DiabloHeavy font */
+@font-face {
+  font-family: "DiabloHeavy";
+  src: url("https://www.dafontfree.net/downfont/f121407-17678042343/diabloheavy.ttf");
+}
+
 :root {
-  --stone-dark: #1a1a1a;
-  --stone-mid: #2a2a2a;
-  --stone-light: #3a3a3a;
+  --bg: #0b0b0b;
+  --panel: #141414;
   --border: #5a3a1a;
   --text: #d6c7a1;
   --accent: #c9a24d;
+  --hover: #1f1f1f;
 }
 
 html, body {
   margin: 0;
   height: 100%;
   background:
-    url("https://www.transparenttextures.com/patterns/stone-wall.png"),
+    url("https://www.transparenttextures.com/patterns/dark-mosaic.png"),
     radial-gradient(circle at top, #1a1208, #050302);
   color: var(--text);
   font-family: "Trebuchet MS", serif;
 }
 
 #header {
-  display: flex;
-  align-items: center;
-  padding: 10px 16px;
-  background: linear-gradient(#2a2a2a, #141414);
-  border-bottom: 3px solid var(--border);
-  box-shadow: inset 0 -2px 4px #000, 0 2px 6px #000;
-}
-
-#header img {
-  height: 48px;
+  padding: 18px;
+  text-align: center;
+  font-family: "DiabloHeavy", serif;
+  font-size: 36px;
+  letter-spacing: 2px;
+  color: #d6c07a; /* golden Diablo II style */
+  text-shadow:
+    0 0 6px #000,
+    0 0 12px rgba(201,162,77,0.6);
+  border-bottom: 2px solid var(--border);
 }
 
 #container {
   display: flex;
-  height: calc(100% - 92px);
+  height: calc(100% - 120px);
 }
 
 #sidebar {
-  width: 220px;
-  background: linear-gradient(#262626, #161616);
-  border-right: 3px solid var(--border);
-  box-shadow: inset -2px 0 6px #000;
+  width: 280px;
+  background: var(--panel);
+  border-right: 2px solid var(--border);
   overflow-y: auto;
 }
 
 #sidebar h3 {
   margin: 10px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--accent);
 }
 
@@ -69,51 +67,33 @@ html, body {
   border-bottom: 1px solid #1f1f1f;
 }
 
-.item:hover { background: #222; }
+.item:hover {
+  background: var(--hover);
+}
+
 .folder { color: #d9b56a; }
 .file { color: #cfcfcf; }
 
 .back {
   font-weight: bold;
   color: var(--accent);
-  background: #1c1c1c;
+  border-bottom: 2px solid var(--border);
 }
 
 #main {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
-  background: linear-gradient(#1a1a1a, #0f0f0f);
-  box-shadow: inset 0 0 12px #000;
 }
 
-/* Breadcrumb */
-#breadcrumb {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  padding: 6px 10px;
+.breadcrumb {
   margin-bottom: 8px;
-  background: linear-gradient(#2b2b2b, #1b1b1b);
-  border: 2px solid var(--border);
-  box-shadow: inset 0 0 6px #000;
   font-size: 13px;
-}
-
-.crumb {
-  cursor: pointer;
   color: var(--accent);
 }
 
-.crumb:hover { text-shadow: 0 0 6px #c9a24d; }
-
-.sep {
-  margin: 0 6px;
-  color: #777;
-}
-
 .filename {
-  margin: 10px 0 6px;
+  margin: 4px 0 6px;
   font-size: 14px;
   color: var(--accent);
 }
@@ -121,19 +101,15 @@ html, body {
 pre {
   background: #0d0d0d;
   padding: 16px;
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   box-shadow: inset 0 0 12px #000;
   white-space: pre-wrap;
   font-family: Consolas, monospace;
   font-size: 13px;
-  line-height: 1.15;   /* 🔧 compact spacing */
+  line-height: 0; /* line spacing for INI files */
 }
 
-pre span {
-  line-height: 1.15;   /* 🔧 prevent span expansion */
-}
-
-/* INI highlighting */
+/* INI syntax colors */
 .ini-section { color: #c9a24d; }
 .ini-key { color: #e0d6b8; }
 .ini-eq { color: #777; }
@@ -143,9 +119,8 @@ pre span {
 canvas, img {
   display: block;
   margin-bottom: 24px;
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   image-rendering: pixelated;
-  background: #000;
 }
 
 #footer {
@@ -156,64 +131,61 @@ canvas, img {
   font-size: 12px;
   padding: 8px;
   background: #0b0703;
-  border-top: 3px solid var(--border);
+  border-top: 2px solid var(--border);
   color: #9f8b5a;
 }
 </style>
 </head>
 
 <body>
-
-<div id="header">
-  <img src="https://raw.githubusercontent.com/D2R-Gimli/Diablo2_act0_color_palette/main/title.png" alt="Project Diablo 2 Tiles">
-</div>
+<div id="header">Project Diablo 2 Tile Preview (act0)</div>
 
 <div id="container">
   <div id="sidebar">
-    <h3>Tiles</h3>
+    <h3>Repository</h3>
     <div id="tree"></div>
   </div>
-
   <div id="main">
-    <div id="breadcrumb"></div>
+    <div class="breadcrumb" id="breadcrumb"></div>
     <p>Select a file to view.</p>
   </div>
 </div>
 
 <div id="footer">
-  graphic preview for ingame tile graphics - beta | v1.0 | made by Gimli
+  Graphic preview for ingame tiles - beta | v1.1 | made by Gimli
 </div>
 
 <script>
 const owner = "D2R-Gimli";
 const repo = "Diablo2_act0_color_palette";
+const basePath = "data/global/tiles"; // starting folder
 const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
-const ROOT_PATH = "data/global/tiles";
 
 const tree = document.getElementById("tree");
 const main = document.getElementById("main");
-const breadcrumb = document.getElementById("breadcrumb");
+const breadcrumbEl = document.getElementById("breadcrumb");
 
-let currentPath = ROOT_PATH;
+let currentPath = basePath;
 const allowedExtensions = [".ini", ".pcx", ".png"];
 
-async function loadDir(path) {
+async function loadDir(path = basePath) {
   currentPath = path;
   tree.innerHTML = "";
-  renderBreadcrumb();
 
-  if (currentPath !== ROOT_PATH) {
-    const back = document.createElement("div");
-    back.textContent = ".. back";
-    back.className = "item back";
-    back.onclick = () => {
-      const parts = currentPath.split("/");
-      parts.pop();
-      loadDir(parts.join("/"));
-    };
-    tree.appendChild(back);
-  }
+  // Back button (cannot go above basePath)
+  const back = document.createElement("div");
+  back.textContent = ".. back";
+  back.className = "item back";
+  back.onclick = () => {
+    if (currentPath === basePath) return;
+    const parts = currentPath.split("/");
+    parts.pop();
+    const newPath = parts.join("/") || basePath;
+    loadDir(newPath);
+  };
+  tree.appendChild(back);
 
+  // Fetch directory
   const res = await fetch(`${apiBase}/${path}`);
   const items = await res.json();
 
@@ -229,38 +201,34 @@ async function loadDir(path) {
     div.onclick = () => item.type === "dir" ? loadDir(item.path) : loadFile(item);
     tree.appendChild(div);
   });
+
+  updateBreadcrumb();
 }
 
-function renderBreadcrumb() {
-  breadcrumb.innerHTML = "";
-  const parts = currentPath.replace(ROOT_PATH, "").split("/").filter(Boolean);
-
-  let path = ROOT_PATH;
-  const rootCrumb = document.createElement("span");
-  rootCrumb.className = "crumb";
-  rootCrumb.textContent = "tiles";
-  rootCrumb.onclick = () => loadDir(ROOT_PATH);
-  breadcrumb.appendChild(rootCrumb);
-
-  parts.forEach(p => {
-    path += "/" + p;
-    const sep = document.createElement("span");
-    sep.className = "sep";
-    sep.textContent = "▸";
-    breadcrumb.appendChild(sep);
-
-    const c = document.createElement("span");
-    c.className = "crumb";
-    c.textContent = p;
-    c.onclick = () => loadDir(path);
-    breadcrumb.appendChild(c);
+function updateBreadcrumb() {
+  const parts = currentPath.split("/");
+  let pathAcc = "";
+  breadcrumbEl.innerHTML = "";
+  parts.forEach((part, index) => {
+    pathAcc += (index === 0 ? "" : "/") + part;
+    const span = document.createElement("span");
+    span.textContent = part;
+    span.style.cursor = "pointer";
+    span.style.color = varAccent();
+    span.onclick = () => loadDir(pathAcc);
+    breadcrumbEl.appendChild(span);
+    if (index < parts.length - 1) breadcrumbEl.appendChild(document.createTextNode(" / "));
   });
 }
 
+function varAccent() { return "#c9a24d"; }
+
 function highlightINI(text) {
   return text.split("\n").map(line => {
-    if (/^\s*[;#]/.test(line)) return `<span class="ini-comment">${line}</span>`;
-    if (/^\s*\[.*\]/.test(line)) return `<span class="ini-section">${line}</span>`;
+    if (/^\s*[;#]/.test(line))
+      return `<span class="ini-comment">${line}</span>`;
+    if (/^\s*\[.*\]/.test(line))
+      return `<span class="ini-section">${line}</span>`;
     if (line.includes("=")) {
       const [k, v] = line.split("=");
       return `<span class="ini-key">${k}</span><span class="ini-eq">=</span><span class="ini-value">${v}</span>`;
@@ -271,7 +239,7 @@ function highlightINI(text) {
 
 async function loadFile(item) {
   main.innerHTML = "";
-  renderBreadcrumb();
+  updateBreadcrumb(); // breadcrumb stays on top
 
   const title = document.createElement("div");
   title.className = "filename";
@@ -297,8 +265,10 @@ async function loadFile(item) {
 function decodePCX(buffer) {
   const data = new Uint8Array(buffer);
   const view = new DataView(buffer);
+
   const w = view.getUint16(8, true) - view.getUint16(4, true) + 1;
   const h = view.getUint16(10, true) - view.getUint16(6, true) + 1;
+
   const pixels = new Uint8Array(w * h);
   let p = 128, i = 0;
 
@@ -313,8 +283,7 @@ function decodePCX(buffer) {
 
   const pal = data.slice(data.length - 768);
   const canvas = document.createElement("canvas");
-  canvas.width = w;
-  canvas.height = h;
+  canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext("2d");
   const img = ctx.createImageData(w, h);
 
@@ -330,7 +299,7 @@ function decodePCX(buffer) {
   return canvas;
 }
 
-loadDir(ROOT_PATH);
+loadDir();
 </script>
 </body>
 </html>
