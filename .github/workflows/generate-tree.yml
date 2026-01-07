@@ -1,0 +1,33 @@
+name: Generate tree.json
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  generate-tree:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run tree generator
+        shell: pwsh
+        run: |
+          ./generate-tree.ps1
+
+      - name: Commit tree.json if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if (git status --porcelain | Select-String "tree.json") {
+            git add tree.json
+            git commit -m "Auto-update tree.json"
+            git push
+          }
