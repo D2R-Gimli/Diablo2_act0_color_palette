@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Project Diablo 2 Tile Preview (act0)</title>
+<!-- Google Font: MedievalSharp -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
 
 <style>
-					  
 @font-face {
   font-family: "DiabloHeavy";
   src: url("https://www.dafontfree.net/downfont/f121407-17678042343/diabloheavy.ttf");
@@ -31,16 +34,14 @@ html, body {
 }
 
 #header {
-  padding: 18px 16px;
-					 
-  font-family: "DiabloHeavy", serif;
-  font-size: 28px;
-					  
+  font-family: 'MedievalSharp', serif;
+  font-size: 28px; /* optional: adjust size if needed */
   color: #d6c07a; /* golden Diablo II style */
   text-shadow:
     0 0 6px #000,
     0 0 12px rgba(201,162,77,0.6);
   border-bottom: 2px solid var(--border);
+  padding: 18px 16px;
 }
 
 #container {
@@ -114,13 +115,6 @@ pre {
   color: var(--text);
 }
 
-					   
-								
-							
-						
-							  
-							 
-
 canvas, img {
   display: block;
   margin-bottom: 24px;
@@ -180,7 +174,6 @@ async function loadDir(path = basePath) {
   currentPath = path;
   tree.innerHTML = "";
 
-										   
   const back = document.createElement("div");
   back.textContent = ".. back";
   back.className = "item back";
@@ -193,7 +186,6 @@ async function loadDir(path = basePath) {
   };
   tree.appendChild(back);
 
-					
   const res = await fetch(`${apiBase}/${path}`);
   const items = await res.json();
 
@@ -221,33 +213,14 @@ function updateBreadcrumb() {
     pathAcc += (index === 0 ? "" : "/") + part;
     const span = document.createElement("span");
     span.textContent = part;
-								  
-								   
     span.onclick = () => loadDir(pathAcc);
     breadcrumbEl.appendChild(span);
     if (index < parts.length - 1) breadcrumbEl.appendChild(document.createTextNode(" / "));
   });
 }
 
-										  
-
-							 
-									   
-							  
-														
-								
-														
-							 
-									 
-																												 
-	 
-				
-				
- 
-
 async function loadFile(item) {
   fileContent.innerHTML = ""; // clear only file content, keep breadcrumb
-												
 
   const title = document.createElement("div");
   title.className = "filename";
